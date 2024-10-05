@@ -1,0 +1,41 @@
+deu errado 
+
+lista_filmes_idiomas = []
+for i, df in df_principal.iterrows():
+    for filme in filmes:
+        if(df['movie_id'] == filme.id):
+            idiomas_df = string_para_lista(df['spoken_languages'])
+            for idioma in idiomas:
+                if(idioma[1] in idiomas_df):
+                        lista = [filme.id, idioma[0]]
+                        lista_filmes_idiomas.append(lista)
+
+print(lista_filmes_idiomas)
+
+
+
+========================================================================================
+filmes_dicts = [vars(filme) for filme in filmes]
+# Converter a lista de dicionários em um DataFrame
+lista_filmes_generos = []
+df_temporario = df_principal.copy()
+df_temporario = df_temporario.dropna()
+
+for i, row in df_temporario.iterrows():
+    movie_id = row['movie_id']
+    lista_generos = string_para_lista(row['genres'])
+    
+    # Iterar sobre cada gênero e procurar no DataFrame de gêneros
+    for genero in lista_generos:
+        genero_row = df_generos_bd[df_generos_bd['nome_genero'].str.lower() == genero.lower()]
+        if not genero_row.empty:
+            id_genero = genero_row.iloc[0]['id_genero']
+            # Adicionar a relação [movie_id, id_genero] à lista
+            lista_filmes_generos.append([movie_id, id_genero])
+
+# Converter a lista de relações em um DataFrame
+df_filmes_generos = pd.DataFrame(lista_filmes_generos, columns=['movie_id', 'id_genero'])
+
+# Mostrar o DataFrame resultante
+print(df_filmes_generos)
+
